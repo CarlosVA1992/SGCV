@@ -16,6 +16,9 @@ def crear_cita(request):
         form = CitaForm(request.POST)
         if form.is_valid():
             try:
+                cita = form.save(commit=False)
+                cita._usuario_actual = request.user
+                cita.save()
                 form.save()
                 messages.success(request, "Cita registrada correctamente.")
                 return redirect("crear_cita")

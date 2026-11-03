@@ -69,3 +69,18 @@ class Cita(models.Model):
 
     def __str__(self):
         return f"{self.fecha} {self.hora} — {self.mascota}"
+
+class Auditoria(models.Model):
+    usuario = models.ForeignKey(
+        "auth.User", on_delete=models.SET_NULL, null=True, blank=True
+    )
+    fecha = models.DateField(auto_now_add=True)
+    hora = models.TimeField(auto_now_add=True)
+    accion = models.CharField(max_length=100)
+    registro_afectado = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        ordering = ["-fecha", "-hora"]
+
+    def __str__(self):
+        return f"{self.fecha} {self.hora} — {self.accion}"
