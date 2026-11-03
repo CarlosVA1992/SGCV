@@ -5,9 +5,17 @@ from django.urls import reverse
 
 from core.models import Cita, Cliente, Mascota, Veterinario
 
+from django.contrib.auth.models import Group, User
 
 class CitaFormTests(TestCase):
     def setUp(self):
+        grupo, _ = Group.objects.get_or_create(name="recepcionista")
+        self.user = User.objects.create_user(
+            username="recepcion", password="clave123"
+        )
+        self.user.groups.add(grupo)
+        self.client.login(username="recepcion", password="clave123")
+
         self.cliente = Cliente.objects.create(nombre="Ana", telefono="70000000")
         self.mascota = Mascota.objects.create(
             nombre="Firulais", especie="Perro", cliente=self.cliente
