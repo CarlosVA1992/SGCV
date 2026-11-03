@@ -27,3 +27,6 @@ Cada commit referencia la tarea del sprint backlog:
 
 ## Cumplimiento normativo
 Ver [`docs/cumplimiento_RD-01.md`](docs/cumplimiento_RD-01.md) para el detalle de protección de datos (CPE Art. 130–131 y Ley N.º 164).
+
+## Puesta en marcha
+Ver [`docs/setup.md`](docs/setup.md).
