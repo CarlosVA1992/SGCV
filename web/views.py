@@ -19,7 +19,6 @@ def crear_cita(request):
                 cita = form.save(commit=False)
                 cita._usuario_actual = request.user
                 cita.save()
-                form.save()
                 messages.success(request, "Cita registrada correctamente.")
                 return redirect("crear_cita")
             except IntegrityError:
@@ -30,7 +29,6 @@ def crear_cita(request):
     else:
         form = CitaForm()
     return render(request, "web/crear_cita.html", {"form": form})
-
 @role_required("administrador", "veterinario")
 def historial_dummy(request):
     """Vista temporal para probar el bloqueo por rol (se reemplaza en S2)."""
