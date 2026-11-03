@@ -18,3 +18,9 @@ Cada commit referencia la tarea del sprint backlog:
 
 - Python 3.10+
 - Django 5.x
+## Verificación RNF-04 — Acceso autenticado por rol
+
+- Contraseñas hasheadas con PBKDF2 (nativo de Django).
+- Validadores de contraseña activos (`AUTH_PASSWORD_VALIDATORS`).
+- Control de acceso por rol mediante decorador `role_required` en capa de negocio.
+- Tests: `web/tests_roles.py` cubre login, bloqueo por rol, anónimo redirigido y hash de contraseña.
