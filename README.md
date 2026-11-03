@@ -24,3 +24,6 @@ Cada commit referencia la tarea del sprint backlog:
 - Validadores de contraseña activos (`AUTH_PASSWORD_VALIDATORS`).
 - Control de acceso por rol mediante decorador `role_required` en capa de negocio.
 - Tests: `web/tests_roles.py` cubre login, bloqueo por rol, anónimo redirigido y hash de contraseña.
+
+## Cumplimiento normativo
+Ver [`docs/cumplimiento_RD-01.md`](docs/cumplimiento_RD-01.md) para el detalle de protección de datos (CPE Art. 130–131 y Ley N.º 164).
