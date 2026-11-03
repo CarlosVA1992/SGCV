@@ -1,10 +1,11 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
 
 from .forms import CitaForm
 
-
+@login_required
 def crear_cita(request):
     if request.method == "POST":
         form = CitaForm(request.POST)
