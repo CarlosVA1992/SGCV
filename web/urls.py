@@ -8,4 +8,5 @@ urlpatterns = [
         template_name="web/login.html"
     ), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("historial/", views.historial_dummy, name="historial_dummy"),
 ]
