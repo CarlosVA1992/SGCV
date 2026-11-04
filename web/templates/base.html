@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Huellitas{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Nunito:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primario: #2E7D6B;
+      --primario-oscuro: #1F5A4D;
+      --acento: #F2A65A;
+      --fondo: #F7F7F5;
+      --texto: #2B2B2B;
+      --texto-sec: #6B6B6B;
+      --borde: #E0E0E0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--fondo);
+      color: var(--texto);
+    }
+    header {
+      background: var(--primario);
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header img { height: 36px; }
+    header nav a {
+      color: white;
+      text-decoration: none;
+      margin-right: 16px;
+      font-weight: 500;
+    }
+    header nav a:hover { text-decoration: underline; }
+    main {
+      max-width: 960px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+    h1, h2, h3 {
+      font-family: 'Nunito', sans-serif;
+      color: var(--primario-oscuro);
+    }
+    .card {
+      background: white;
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-primario {
+      background: var(--primario);
+      color: white;
+    }
+    .btn-primario:hover { background: var(--primario-oscuro); }
+    .btn-secundario {
+      background: transparent;
+      color: var(--primario);
+      border: 1px solid var(--primario);
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--borde);
+      border-radius: 6px;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primario);
+    }
+    .error { color: #EF4444; font-size: 0.9em; }
+    .mensaje { padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; }
+    .mensaje-success { background: #D1FAE5; color: #065F46; }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <header>
+    <img src="{% static 'img/logo.svg' %}" alt="Huellitas">
+    <nav>
+      {% if user.is_authenticated %}
+        <a href="{% url 'crear_cita' %}">Nueva cita</a>
+        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-secundario" style="margin-left:8px;">Salir</button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}">Ingresar</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="mensaje mensaje-success">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

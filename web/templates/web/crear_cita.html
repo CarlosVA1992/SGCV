@@ -1,18 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Nueva cita — Huellitas</title>
-</head>
-<body>
-  <h1>Registrar cita</h1>
+{% extends "base.html" %}
 
-  {% if messages %}
-    {% for message in messages %}
-      <p style="color: green;">{{ message }}</p>
-    {% endfor %}
-  {% endif %}
+{% block title %}Nueva cita — Huellitas{% endblock %}
 
+{% block content %}
+<h1>Registrar cita</h1>
+<div class="card">
   <form method="post">
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -21,11 +13,11 @@
         {{ field.label_tag }}<br>
         {{ field }}
         {% if field.errors %}
-          <br><span style="color: red;">{{ field.errors|striptags }}</span>
+          <br><span class="error">{{ field.errors|striptags }}</span>
         {% endif %}
       </p>
     {% endfor %}
-    <button type="submit">Guardar cita</button>
+    <button type="submit" class="btn btn-primario">Guardar cita</button>
   </form>
-</body>
-</html>
+</div>
+{% endblock %}
