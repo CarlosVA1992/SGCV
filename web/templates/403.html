@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Acceso denegado — Huellitas{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 40px auto; text-align: center;">
+  <h1>403 — Acceso denegado</h1>
+  <p>No tienes permisos para ver esta página.</p>
+  <a href="{% url 'crear_cita' %}" class="btn btn-primario">Volver al inicio</a>
+</div>
+{% endblock %}
