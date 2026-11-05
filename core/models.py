@@ -46,6 +46,13 @@ class Veterinario(models.Model):
 
 
 class Cita(models.Model):
+    ESTADOS = [
+        ("programada", "Programada"),
+        ("en_atencion", "En atención"),
+        ("reprogramada", "Reprogramada"),
+        ("cancelada", "Cancelada"),
+        ("inasistencia", "Inasistencia"),
+    ]
     cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT)
     mascota = models.ForeignKey(Mascota, on_delete=models.PROTECT)
     veterinario = models.ForeignKey(Veterinario, on_delete=models.PROTECT)
@@ -54,6 +61,7 @@ class Cita(models.Model):
     motivo = models.CharField(max_length=200)
     tipo = models.CharField(max_length=50)
     duracion_min = models.PositiveIntegerField(default=30)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default="programada")
 
     class Meta:
         constraints = [
@@ -67,9 +75,18 @@ class Cita(models.Model):
             models.Index(fields=["veterinario"]),
         ]
 
+    def puede_transicionar(self, nuevo_estado):
+        return nuevo_estado in TRANSICIONES.get(self.estado, [])
     def __str__(self):
         return f"{self.fecha} {self.hora} — {self.mascota}"
 
+TRANSICIONES = {
+    "programada": ["en_atencion", "reprogramada", "cancelada", "inasistencia"],
+    "en_atencion": [],
+    "reprogramada": [],
+    "cancelada": [],
+    "inasistencia": [],
+}
 class Auditoria(models.Model):
     usuario = models.ForeignKey(
         "auth.User", on_delete=models.SET_NULL, null=True, blank=True
