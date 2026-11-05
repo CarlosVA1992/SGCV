@@ -9,4 +9,5 @@ urlpatterns = [
     ), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("historial/", views.historial_dummy, name="historial_dummy"),
+    path("agenda/", views.agenda, name="agenda"),
 ]
