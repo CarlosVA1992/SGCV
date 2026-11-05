@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 
 class Cliente(models.Model):
@@ -67,6 +68,7 @@ class Cita(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=["veterinario", "fecha", "hora"],
+                condition=Q(estado__in=["programada", "en_atencion"]),
                 name="unique_cita_vet_fecha_hora",
             )
         ]
