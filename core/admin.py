@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cliente, Mascota, Veterinario, Cita, Auditoria, Consulta
+from .models import Adenda, Cliente, Mascota, Veterinario, Cita, Auditoria, Consulta
 
 @admin.register(Cita)
 class CitaAdmin(admin.ModelAdmin):
@@ -8,6 +8,10 @@ class CitaAdmin(admin.ModelAdmin):
 @admin.register(Consulta)
 class ConsultaAdmin(admin.ModelAdmin):
     list_display = ("fecha", "mascota", "veterinario", "peso_kg")
+
+@admin.register(Adenda)
+class AdendaAdmin(admin.ModelAdmin):
+    list_display = ("fecha", "hora", "consulta", "usuario")
 admin.site.register(Cliente)
 admin.site.register(Mascota)
 admin.site.register(Veterinario)

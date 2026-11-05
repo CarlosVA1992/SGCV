@@ -120,3 +120,21 @@ class Consulta(models.Model):
 
     def __str__(self):
         return f"{self.fecha} — {self.mascota.nombre}"
+class Adenda(models.Model):
+    consulta = models.ForeignKey(
+        Consulta, on_delete=models.PROTECT, related_name="adendas"
+    )
+    usuario = models.ForeignKey(
+        "auth.User", on_delete=models.SET_NULL, null=True
+    )
+    valor_anterior = models.TextField()
+    valor_nuevo = models.TextField()
+    motivo = models.TextField()
+    fecha = models.DateField(auto_now_add=True)
+    hora = models.TimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-fecha", "-hora"]
+
+    def __str__(self):
+        return f"Adenda {self.fecha} — consulta {self.consulta_id}"
