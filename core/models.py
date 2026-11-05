@@ -103,3 +103,20 @@ class Auditoria(models.Model):
 
     def __str__(self):
         return f"{self.fecha} {self.hora} — {self.accion}"
+
+class Consulta(models.Model):
+    mascota = models.ForeignKey(
+        Mascota, on_delete=models.CASCADE, related_name="consultas"
+    )
+    veterinario = models.ForeignKey(Veterinario, on_delete=models.PROTECT)
+    fecha = models.DateField(auto_now_add=True)
+    peso_kg = models.DecimalField(max_digits=5, decimal_places=2)
+    diagnostico = models.TextField()
+    tratamiento = models.TextField()
+
+    class Meta:
+        ordering = ["-fecha", "-id"]
+        indexes = [models.Index(fields=["fecha"])]
+
+    def __str__(self):
+        return f"{self.fecha} — {self.mascota.nombre}"

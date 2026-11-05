@@ -1,10 +1,13 @@
 from django.contrib import admin
-from .models import Cliente, Mascota, Veterinario, Cita, Auditoria
+from .models import Cliente, Mascota, Veterinario, Cita, Auditoria, Consulta
 
 @admin.register(Cita)
 class CitaAdmin(admin.ModelAdmin):
     list_display = ("fecha", "hora", "mascota", "veterinario", "estado")
 
+@admin.register(Consulta)
+class ConsultaAdmin(admin.ModelAdmin):
+    list_display = ("fecha", "mascota", "veterinario", "peso_kg")
 admin.site.register(Cliente)
 admin.site.register(Mascota)
 admin.site.register(Veterinario)
