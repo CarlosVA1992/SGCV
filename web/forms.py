@@ -1,7 +1,7 @@
 from datetime import date, datetime
 
 from django import forms
-from core.models import Cita, Consulta
+from core.models import Cita, Consulta, Adenda
 
 
 
@@ -74,3 +74,14 @@ class ConsultaForm(forms.ModelForm):
         if not tratamiento:
             raise forms.ValidationError("El tratamiento es obligatorio.")
         return tratamiento
+
+class AdendaForm(forms.ModelForm):
+    class Meta:
+        model = Adenda
+        fields = ["valor_anterior", "valor_nuevo", "motivo"]
+
+    def clean_motivo(self):
+        motivo = self.cleaned_data["motivo"].strip()
+        if not motivo:
+            raise forms.ValidationError("El motivo de la adenda es obligatorio.")
+        return motivo

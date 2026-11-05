@@ -13,9 +13,9 @@ from datetime import date, timedelta
 from core.models import Cita, Veterinario
 
 from django.db.models import Q
-from core.models import Mascota, Consulta
+from core.models import Mascota, Consulta, Adenda
 from django.shortcuts import get_object_or_404
-from .forms import ConsultaForm
+from .forms import ConsultaForm, AdendaForm
 
 
 
@@ -124,4 +124,24 @@ def crear_consulta(request, mascota_id):
     return render(request, "web/crear_consulta.html", {
         "form": form,
         "mascota": mascota,
+    })
+
+@role_required("administrador", "veterinario")
+def crear_adenda(request, consulta_id):
+    consulta = get_object_or_404(Consulta, pk=consulta_id)
+    if request.method == "POST":
+        form = AdendaForm(request.POST)
+        if form.is_valid():
+            adenda = form.save(commit=False)
+            adenda.consulta = consulta
+            adenda.usuario = request.user
+            adenda.save()
+            messages.success(request, "Adenda registrada correctamente.")
+            return redirect("buscar_mascota")
+    else:
+        # Precarga el diagnóstico actual como valor anterior
+        form = AdendaForm(initial={"valor_anterior": consulta.diagnostico})
+    return render(request, "web/crear_adenda.html", {
+        "form": form,
+        "consulta": consulta,
     })
