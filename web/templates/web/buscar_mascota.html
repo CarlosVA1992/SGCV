@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Buscar mascota — Huellitas{% endblock %}
+
+{% block content %}
+<h1>Buscar mascota</h1>
+
+<form method="get" class="card" style="margin-bottom: 16px; display: flex; gap: 12px; align-items: end;">
+  <div style="flex: 1;">
+    <label for="q">Código o nombre</label><br>
+    <input type="text" name="q" id="q" value="{{ q }}" placeholder="Ej. M-00001 o Firulais">
+  </div>
+  <button type="submit" class="btn btn-primario">Buscar</button>
+</form>
+
+{% if q %}
+  <h2>Resultados para "{{ q }}"</h2>
+  {% if resultados %}
+    <table class="card" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
+          <th>Código</th><th>Nombre</th><th>Especie</th><th>Cliente</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in resultados %}
+          <tr style="border-bottom: 1px solid var(--borde);">
+            <td>{{ m.codigo }}</td>
+            <td>{{ m.nombre }}</td>
+            <td>{{ m.especie }}</td>
+            <td>{{ m.cliente.nombre }}</td>
+            <td>
+              <a href="#" class="btn btn-secundario" style="padding: 4px 10px;">Nueva consulta</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No se encontraron mascotas.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}

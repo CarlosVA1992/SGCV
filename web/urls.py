@@ -10,4 +10,5 @@ urlpatterns = [
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("historial/", views.historial_dummy, name="historial_dummy"),
     path("agenda/", views.agenda, name="agenda"),
+    path("mascotas/", views.buscar_mascota, name="buscar_mascota"),
 ]

@@ -115,6 +115,7 @@
             {% if user.is_superuser or user.groups.all|length > 0 %}
             <a href="{% url 'historial_dummy' %}">Historial</a>
             <a href="{% url 'agenda' %}">Agenda</a>
+            <a href="{% url 'buscar_mascota' %}">Mascotas</a>
             {% endif %}
             <form method="post" action="{% url 'logout' %}" style="display:inline;">
             {% csrf_token %}

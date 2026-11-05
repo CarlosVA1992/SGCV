@@ -12,6 +12,9 @@ from django.http import HttpResponse
 from datetime import date, timedelta
 from core.models import Cita, Veterinario
 
+from django.db.models import Q
+from core.models import Mascota
+
 
 @role_required("administrador", "recepcionista")
 def crear_cita(request):
@@ -88,3 +91,16 @@ def agenda(request):
         "filtro_vet": filtro_vet,
     }
     return render(request, "web/agenda.html", context)
+
+@login_required
+def buscar_mascota(request):
+    q = request.GET.get("q", "").strip()
+    resultados = []
+    if q:
+        resultados = Mascota.objects.filter(
+            Q(codigo__icontains=q) | Q(nombre__icontains=q)
+        ).select_related("cliente").order_by("codigo")
+    return render(request, "web/buscar_mascota.html", {
+        "q": q,
+        "resultados": resultados,
+    })
