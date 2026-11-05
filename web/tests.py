@@ -68,5 +68,5 @@ class CitaFormTests(TestCase):
         self._post()  # primera cita OK
         response = self._post()  # misma fecha/hora/vet
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "ya existe")
+        self.assertContains(response, "Ya existe")
         self.assertEqual(Cita.objects.count(), 1)
