@@ -59,8 +59,9 @@
       {% for d, citas in agenda_semana.items %}
         {% if d == dia %}
           {% for c in citas %}
-            <div class="estado-{{ c.estado }}" style="font-size: 0.85em; margin-top: 4px;">
-              {{ c.hora|time:"H:i" }} — {{ c.mascota.nombre }}
+            <div style="margin-top: 4px;">
+            <span class="estado estado-{{ c.estado }}">{{ c.hora|time:"H:i" }}</span>
+            {{ c.mascota.nombre }}
             </div>
           {% empty %}
             <div style="font-size: 0.85em; color: var(--texto-sec);">Sin citas</div>

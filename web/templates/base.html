@@ -89,6 +89,20 @@
     .error { color: #EF4444; font-size: 0.9em; }
     .mensaje { padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; }
     .mensaje-success { background: #D1FAE5; color: #065F46; }
+    /* Colores por estado de cita */
+    .estado {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-weight: 500;
+      color: white;
+    }
+    .estado-programada    { background: #3B82F6; }
+    .estado-en_atencion   { background: #F59E0B; }
+    .estado-reprogramada  { background: #8B5CF6; }
+    .estado-cancelada     { background: #EF4444; }
+    .estado-inasistencia  { background: #6B7280; }
   </style>
   {% block extra_css %}{% endblock %}
 </head>
