@@ -13,7 +13,10 @@ from datetime import date, timedelta
 from core.models import Cita, Veterinario
 
 from django.db.models import Q
-from core.models import Mascota
+from core.models import Mascota, Consulta
+from django.shortcuts import get_object_or_404
+from .forms import ConsultaForm
+
 
 
 @role_required("administrador", "recepcionista")
@@ -103,4 +106,22 @@ def buscar_mascota(request):
     return render(request, "web/buscar_mascota.html", {
         "q": q,
         "resultados": resultados,
+    })
+
+@role_required("administrador", "veterinario")
+def crear_consulta(request, mascota_id):
+    mascota = get_object_or_404(Mascota, pk=mascota_id)
+    if request.method == "POST":
+        form = ConsultaForm(request.POST)
+        if form.is_valid():
+            consulta = form.save(commit=False)
+            consulta.mascota = mascota
+            consulta.save()
+            messages.success(request, "Consulta registrada correctamente.")
+            return redirect("buscar_mascota")
+    else:
+        form = ConsultaForm()
+    return render(request, "web/crear_consulta.html", {
+        "form": form,
+        "mascota": mascota,
     })

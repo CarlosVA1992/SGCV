@@ -30,7 +30,7 @@
             <td>{{ m.especie }}</td>
             <td>{{ m.cliente.nombre }}</td>
             <td>
-              <a href="#" class="btn btn-secundario" style="padding: 4px 10px;">Nueva consulta</a>
+              <a href="{% url 'crear_consulta' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Nueva consulta</a>
             </td>
           </tr>
         {% endfor %}

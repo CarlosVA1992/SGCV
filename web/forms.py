@@ -1,7 +1,8 @@
 from datetime import date, datetime
 
 from django import forms
-from core.models import Cita
+from core.models import Cita, Consulta
+
 
 
 class CitaForm(forms.ModelForm):
@@ -49,3 +50,27 @@ class CitaForm(forms.ModelForm):
                 "La mascota no pertenece al cliente seleccionado.",
             )
         return cleaned
+
+
+class ConsultaForm(forms.ModelForm):
+    class Meta:
+        model = Consulta
+        fields = ["veterinario", "peso_kg", "diagnostico", "tratamiento"]
+
+    def clean_peso_kg(self):
+        peso = self.cleaned_data["peso_kg"]
+        if peso <= 0:
+            raise forms.ValidationError("El peso debe ser mayor que cero.")
+        return peso
+
+    def clean_diagnostico(self):
+        diagnostico = self.cleaned_data["diagnostico"].strip()
+        if not diagnostico:
+            raise forms.ValidationError("El diagnóstico es obligatorio.")
+        return diagnostico
+
+    def clean_tratamiento(self):
+        tratamiento = self.cleaned_data["tratamiento"].strip()
+        if not tratamiento:
+            raise forms.ValidationError("El tratamiento es obligatorio.")
+        return tratamiento

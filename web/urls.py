@@ -11,4 +11,5 @@ urlpatterns = [
     path("historial/", views.historial_dummy, name="historial_dummy"),
     path("agenda/", views.agenda, name="agenda"),
     path("mascotas/", views.buscar_mascota, name="buscar_mascota"),
+    path("mascotas/<int:mascota_id>/consulta/", views.crear_consulta, name="crear_consulta"),
 ]
