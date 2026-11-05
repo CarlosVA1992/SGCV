@@ -26,6 +26,7 @@
 
 <h2>Citas del {{ fecha|date:"d/m/Y" }}</h2>
 {% if citas_dia %}
+<div style="overflow-x: auto;">
   <table style="width: 100%; border-collapse: collapse;" class="card">
     <thead>
       <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
@@ -44,12 +45,13 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
 {% else %}
   <p>No hay citas para este día.</p>
 {% endif %}
 
 <h2>Semana</h2>
-<div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
+<div class="semana-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
   {% for dia in dias_semana %}
     <div class="card" style="padding: 8px;">
       <strong>{{ dia|date:"D d/m" }}</strong>

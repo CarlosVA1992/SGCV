@@ -103,6 +103,11 @@
     .estado-reprogramada  { background: #8B5CF6; }
     .estado-cancelada     { background: #EF4444; }
     .estado-inasistencia  { background: #6B7280; }
+    @media (max-width: 700px) {
+  .semana-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
   </style>
   {% block extra_css %}{% endblock %}
 </head>
