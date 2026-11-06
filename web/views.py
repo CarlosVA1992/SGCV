@@ -153,7 +153,17 @@ def evolucion(request, mascota_id):
     consultas = Consulta.objects.filter(
         mascota=mascota
     ).select_related("veterinario").order_by("fecha", "id")
+
+    ultima = consultas.last()  # la más reciente por fecha
+    resumen = {
+        "diagnostico_vigente": ultima.diagnostico if ultima else None,
+        "fecha_ultima": ultima.fecha if ultima else None,
+        "medicamentos_activos": mascota.medicamentos_activos,
+        "alergias": mascota.alergias,
+    }
+
     return render(request, "web/evolucion.html", {
         "mascota": mascota,
         "consultas": consultas,
+        "resumen": resumen,
     })
