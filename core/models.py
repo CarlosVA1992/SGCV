@@ -140,3 +140,33 @@ class Adenda(models.Model):
 
     def __str__(self):
         return f"Adenda {self.fecha} — consulta {self.consulta_id}"
+
+class FranjaHoraria(models.Model):
+    DIAS = [
+        (0, "Lunes"),
+        (1, "Martes"),
+        (2, "Miércoles"),
+        (3, "Jueves"),
+        (4, "Viernes"),
+        (5, "Sábado"),
+    ]
+
+    veterinario = models.ForeignKey(
+        Veterinario, on_delete=models.CASCADE, related_name="franjas"
+    )
+    dia_semana = models.PositiveSmallIntegerField(choices=DIAS)
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
+    disponible = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["veterinario", "dia_semana", "hora_inicio"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["veterinario", "dia_semana", "hora_inicio"],
+                name="unique_franja_vet_dia_inicio",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.veterinario.nombre} — {self.get_dia_semana_display()} {self.hora_inicio}-{self.hora_fin}"
