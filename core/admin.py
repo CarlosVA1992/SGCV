@@ -3,7 +3,7 @@ from .models import Adenda, Cliente, Mascota, Veterinario, Cita, Auditoria, Cons
 
 @admin.register(Cita)
 class CitaAdmin(admin.ModelAdmin):
-    list_display = ("fecha", "hora", "mascota", "veterinario", "estado")
+    list_display = ("fecha", "hora", "mascota", "veterinario", "estado", "prioridad")
 
 @admin.register(Consulta)
 class ConsultaAdmin(admin.ModelAdmin):

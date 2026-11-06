@@ -10,7 +10,7 @@ class CitaForm(forms.ModelForm):
         model = Cita
         fields = [
             "cliente", "mascota", "veterinario",
-            "fecha", "hora", "motivo", "tipo", "duracion_min",
+            "fecha", "hora", "motivo", "tipo", "duracion_min", "prioridad",
         ]
         widgets = {
             "fecha": forms.DateInput(attrs={"type": "date"}),

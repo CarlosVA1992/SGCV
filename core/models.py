@@ -49,6 +49,12 @@ class Veterinario(models.Model):
 
 
 class Cita(models.Model):
+    PRIORIDADES = [
+        (1, "Baja"),
+        (2, "Media"),
+        (3, "Alta"),
+        (4, "Urgente"),
+    ]
     ESTADOS = [
         ("programada", "Programada"),
         ("en_atencion", "En atención"),
@@ -65,6 +71,9 @@ class Cita(models.Model):
     tipo = models.CharField(max_length=50)
     duracion_min = models.PositiveIntegerField(default=30)
     estado = models.CharField(max_length=20, choices=ESTADOS, default="programada")
+    prioridad = models.PositiveSmallIntegerField(
+        choices=PRIORIDADES, default=2, blank=True
+    )
 
     class Meta:
         constraints = [
