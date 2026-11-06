@@ -30,3 +30,13 @@ Ver [`docs/cumplimiento_RD-01.md`](docs/cumplimiento_RD-01.md) para el detalle d
 
 ## Puesta en marcha
 Ver [`docs/setup.md`](docs/setup.md).
+
+
+## Sprint 2 — Evidencia
+- [Review y retrospectiva](docs/sprint2/review.md)
+- [Revisión de código](docs/sprint2/revision_codigo.md)
+- [Buffer de imprevistos](docs/sprint2/buffer.md)
+- [Rendimiento RNF-01](docs/sprint2/rendimiento.md)
+- [Usabilidad RNF-03](docs/sprint2/usabilidad.md)
+- [Responsive RNF-06](docs/sprint2/responsive.md)
+- [Identidad visual](docs/design/estilo.md)
