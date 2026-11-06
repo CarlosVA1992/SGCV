@@ -13,4 +13,5 @@ urlpatterns = [
     path("mascotas/", views.buscar_mascota, name="buscar_mascota"),
     path("mascotas/<int:mascota_id>/consulta/", views.crear_consulta, name="crear_consulta"),
     path("consultas/<int:consulta_id>/adenda/", views.crear_adenda, name="crear_adenda"),
+    path("mascotas/<int:mascota_id>/evolucion/", views.evolucion, name="evolucion"),
 ]

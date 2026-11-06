@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Evolución — {{ mascota.nombre }}{% endblock %}
+
+{% block content %}
+<h1>Evolución clínica</h1>
+
+<p class="card" style="padding: 8px 12px;">
+  <strong>Mascota:</strong> {{ mascota.codigo }} — {{ mascota.nombre }} ({{ mascota.especie }})<br>
+  <strong>Cliente:</strong> {{ mascota.cliente.nombre }}
+</p>
+
+<h2>Consultas ({{ consultas|length }})</h2>
+
+{% if consultas %}
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    {% for c in consultas %}
+      <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <strong>{{ c.fecha|date:"d/m/Y" }}</strong>
+          <span style="color: var(--texto-sec); font-size: 0.9em;">
+            {{ c.veterinario.nombre }} · Peso: {{ c.peso_kg }} kg
+          </span>
+        </div>
+        <p style="margin: 8px 0 4px;"><strong>Diagnóstico:</strong> {{ c.diagnostico }}</p>
+        <p style="margin: 0;"><strong>Tratamiento:</strong> {{ c.tratamiento }}</p>
+        {% if c.adendas.all %}
+          <div style="margin-top: 8px; padding: 8px; background: #FEF3C7; border-radius: 4px; font-size: 0.9em;">
+            <strong>Adendas:</strong>
+            {% for a in c.adendas.all %}
+              <div>{{ a.fecha|date:"d/m/Y" }} — {{ a.motivo }}: de "{{ a.valor_anterior }}" a "{{ a.valor_nuevo }}"</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>Esta mascota aún no tiene consultas registradas.</p>
+{% endif %}
+
+<a href="{% url 'buscar_mascota' %}" class="btn btn-secundario" style="margin-top: 16px;">Volver a búsqueda</a>
+{% endblock %}

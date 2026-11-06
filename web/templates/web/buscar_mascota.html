@@ -33,6 +33,7 @@
                 <td>{{ m.medicamentos_activos|default:"—" }}</td>
                 <td>
                   <a href="{% url 'crear_consulta' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Nueva consulta</a>
+                  <a href="{% url 'evolucion' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Evolución</a>
                 </td>
               </tr>
             {% endfor %}

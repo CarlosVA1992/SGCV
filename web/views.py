@@ -145,3 +145,15 @@ def crear_adenda(request, consulta_id):
         "form": form,
         "consulta": consulta,
     })
+
+
+@role_required("administrador", "veterinario")
+def evolucion(request, mascota_id):
+    mascota = get_object_or_404(Mascota, pk=mascota_id)
+    consultas = Consulta.objects.filter(
+        mascota=mascota
+    ).select_related("veterinario").order_by("fecha", "id")
+    return render(request, "web/evolucion.html", {
+        "mascota": mascota,
+        "consultas": consultas,
+    })
