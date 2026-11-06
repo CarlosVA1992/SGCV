@@ -21,6 +21,8 @@ class Mascota(models.Model):
     cliente = models.ForeignKey(
         Cliente, on_delete=models.CASCADE, related_name="mascotas"
     )
+    alergias = models.TextField(blank=True, default="")
+    medicamentos_activos = models.TextField(blank=True, default="")
 
     class Meta:
         indexes = [models.Index(fields=["nombre"])]

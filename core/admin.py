@@ -13,6 +13,8 @@ class ConsultaAdmin(admin.ModelAdmin):
 class AdendaAdmin(admin.ModelAdmin):
     list_display = ("fecha", "hora", "consulta", "usuario")
 admin.site.register(Cliente)
-admin.site.register(Mascota)
+@admin.register(Mascota)
+class MascotaAdmin(admin.ModelAdmin):
+    list_display = ("codigo", "nombre", "especie", "cliente")
 admin.site.register(Veterinario)
 admin.site.register(Auditoria)

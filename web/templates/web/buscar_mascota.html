@@ -18,23 +18,25 @@
   {% if resultados %}
     <table class="card" style="width: 100%; border-collapse: collapse;">
       <thead>
-        <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
-          <th>Código</th><th>Nombre</th><th>Especie</th><th>Cliente</th><th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for m in resultados %}
-          <tr style="border-bottom: 1px solid var(--borde);">
-            <td>{{ m.codigo }}</td>
-            <td>{{ m.nombre }}</td>
-            <td>{{ m.especie }}</td>
-            <td>{{ m.cliente.nombre }}</td>
-            <td>
-              <a href="{% url 'crear_consulta' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Nueva consulta</a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
+  <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
+    <th>Código</th><th>Nombre</th><th>Especie</th><th>Cliente</th><th>Alergias</th><th>Medicamentos</th><th></th>
+  </tr>
+          </thead>
+          <tbody>
+            {% for m in resultados %}
+              <tr style="border-bottom: 1px solid var(--borde);">
+                <td>{{ m.codigo }}</td>
+                <td>{{ m.nombre }}</td>
+                <td>{{ m.especie }}</td>
+                <td>{{ m.cliente.nombre }}</td>
+                <td>{{ m.alergias|default:"—" }}</td>
+                <td>{{ m.medicamentos_activos|default:"—" }}</td>
+                <td>
+                  <a href="{% url 'crear_consulta' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Nueva consulta</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
     </table>
   {% else %}
     <p>No se encontraron mascotas.</p>
