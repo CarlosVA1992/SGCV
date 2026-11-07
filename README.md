@@ -40,3 +40,7 @@ Ver [`docs/setup.md`](docs/setup.md).
 - [Usabilidad RNF-03](docs/sprint2/usabilidad.md)
 - [Responsive RNF-06](docs/sprint2/responsive.md)
 - [Identidad visual](docs/design/estilo.md)
+
+## Deuda técnica conocida
+- **RNF-07 (backups diarios):** pospuesto para versión futura por limitantes del
+  hosting gratuito. Ver [`docs/sprint3/rnf07_pendiente.md`](docs/sprint3/rnf07_pendiente.md).
