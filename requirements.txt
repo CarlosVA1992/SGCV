@@ -1,3 +1,12 @@
+annotated-types==0.8.0
 asgiref==3.13.0
+cpsat-logutils==1.0.0
 Django==5.2.18
+numpy==2.5.4
+orloge==1.0.0
+PuLP==2.8.0
+pydantic==2.14.3
+pydantic_core==2.50.4
 sqlparse==0.6.1
+typing-inspection==0.4.5
+typing_extensions==4.16.0
