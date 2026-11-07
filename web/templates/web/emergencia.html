@@ -34,7 +34,7 @@
     </p>
 
     {% if resultado.afectadas %}
-      <h3>Citas afectadas ({{ resultado.afectadas|length }})</h3>
+  <h3>Citas afectadas ({{ resultado.afectadas|length }}) — reprogramadas</h3>
       <table style="width: 100%; border-collapse: collapse;">
         <thead>
           <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
@@ -58,6 +58,25 @@
     {% else %}
       <p>No hay citas afectadas por esta extensión.</p>
     {% endif %}
+    {% if resultado.propuesta %}
+  <h3>Nuevos horarios propuestos</h3>
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
+        <th>Cita</th><th>Veterinario</th><th>Nueva hora</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in resultado.propuesta %}
+        <tr style="border-bottom: 1px solid var(--borde);">
+          <td>{{ a.cita_id }}</td>
+          <td>{{ a.veterinario_id }}</td>
+          <td>{{ a.hora_inicio|time:"H:i" }} – {{ a.hora_fin|time:"H:i" }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
   </div>
 {% endif %}
 {% endblock %}

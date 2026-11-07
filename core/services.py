@@ -56,30 +56,54 @@ from datetime import timedelta
 from core.models import Cita
 
 
-def registrar_emergencia(cita_id: int, minutos_extra: int, usuario=None) -> dict:
+def registrar_emergencia(cita_id: int, minutos_extra: int, usuario=None,
+                         reprogramar: bool = True) -> dict:
     """
-    Extiende una cita por minutos_extra y devuelve las citas afectadas
-    (las que empiezan después de la cita extendida el mismo día).
-    No modifica el estado de las citas; solo calcula el impacto.
+    Extiende una cita por minutos_extra y, opcionalmente, reprograma en lote
+    las citas afectadas (las que empiezan después de la cita extendida).
     """
     from core.models import Auditoria
+    from core.optimizador import (
+        cargar_citas_pendientes,
+        cargar_franjas_disponibles,
+        optimizar,
+    )
 
     cita = Cita.objects.select_related("veterinario", "cliente").get(pk=cita_id)
     nueva_duracion = cita.duracion_min + minutos_extra
     hora_fin_original = _sumar_minutos(cita.hora, cita.duracion_min)
     hora_fin_nueva = _sumar_minutos(cita.hora, nueva_duracion)
 
-    # Citas del mismo veterinario y día que empiezan después de la original
-    afectadas = Cita.objects.filter(
-        veterinario=cita.veterinario,
-        fecha=cita.fecha,
-        hora__gte=hora_fin_original,
-        estado__in=["programada", "reprogramada"],
-    ).exclude(pk=cita.pk).select_related("cliente", "mascota")
+    afectadas = list(
+        Cita.objects.filter(
+            veterinario=cita.veterinario,
+            fecha=cita.fecha,
+            hora__gte=hora_fin_original,
+            estado__in=["programada", "reprogramada"],
+        ).exclude(pk=cita.pk).select_related("cliente", "mascota")
+    )
 
-    # Actualizar duración de la cita extendida
+    # Extender la cita original
     cita.duracion_min = nueva_duracion
     cita.save(update_fields=["duracion_min"])
+
+    # Reprogramar en lote: cambiar estado y proponer nuevos horarios
+    propuesta = []
+    if reprogramar and afectadas:
+        for c in afectadas:
+            c.estado = "reprogramada"
+            c.save(update_fields=["estado"])
+
+        # Calcular propuesta de nuevos horarios con el optimizador
+        citas_pend = cargar_citas_pendientes(cita.fecha)
+        franjas = cargar_franjas_disponibles()
+        propuesta = optimizar(citas_pend, franjas)
+
+        Auditoria.objects.create(
+            usuario=usuario,
+            accion="citas_reprogramadas_lote",
+            registro_afectado=f"{len(afectadas)} citas (emergencia cita:{cita.id})",
+        )
 
     Auditoria.objects.create(
         usuario=usuario,
@@ -92,7 +116,9 @@ def registrar_emergencia(cita_id: int, minutos_extra: int, usuario=None) -> dict
         "minutos_extra": minutos_extra,
         "hora_fin_original": hora_fin_original,
         "hora_fin_nueva": hora_fin_nueva,
-        "afectadas": list(afectadas),
+        "afectadas": afectadas,
+        "propuesta": propuesta,
+        "reprogramadas": len(afectadas) if reprogramar else 0,
     }
 
 
