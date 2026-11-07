@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Emergencia — Huellitas{% endblock %}
+
+{% block content %}
+<h1>Registrar emergencia / extensión</h1>
+
+<p class="card" style="padding: 8px 12px;">
+  <strong>Cita:</strong> #{{ cita.id }} — {{ cita.fecha|date:"d/m/Y" }} {{ cita.hora|time:"H:i" }}<br>
+  <strong>Mascota:</strong> {{ cita.mascota.nombre }}<br>
+  <strong>Veterinario:</strong> {{ cita.veterinario.nombre }}<br>
+  <strong>Duración actual:</strong> {{ cita.duracion_min }} min
+</p>
+
+<div class="card" style="margin-top: 16px;">
+  <form method="post">
+    {% csrf_token %}
+    <p>
+      <label for="minutos_extra">Minutos extra de la extensión</label><br>
+      <input type="number" name="minutos_extra" id="minutos_extra" min="1" value="15" required>
+    </p>
+    <button type="submit" class="btn btn-primario">Registrar emergencia</button>
+    <a href="{% url 'agenda' %}" class="btn btn-secundario">Cancelar</a>
+  </form>
+</div>
+
+{% if resultado %}
+  <div class="card" style="margin-top: 16px; background: #FEF3C7;">
+    <h2 style="margin-top: 0;">Impacto de la emergencia</h2>
+    <p>
+      Extensión: <strong>+{{ resultado.minutos_extra }} min</strong><br>
+      Hora fin original: {{ resultado.hora_fin_original|time:"H:i" }}<br>
+      Hora fin nueva: {{ resultado.hora_fin_nueva|time:"H:i" }}
+    </p>
+
+    {% if resultado.afectadas %}
+      <h3>Citas afectadas ({{ resultado.afectadas|length }})</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
+            <th>Hora</th><th>Mascota</th><th>Cliente</th><th>Teléfono</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in resultado.afectadas %}
+            <tr style="border-bottom: 1px solid var(--borde);">
+              <td>{{ c.hora|time:"H:i" }}</td>
+              <td>{{ c.mascota.nombre }}</td>
+              <td>{{ c.cliente.nombre }}</td>
+              <td>{{ c.cliente.telefono }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <p style="margin-top: 8px; font-size: 0.9em; color: var(--texto-sec);">
+        Contactar a estos clientes para avisar del cambio de horario.
+      </p>
+    {% else %}
+      <p>No hay citas afectadas por esta extensión.</p>
+    {% endif %}
+  </div>
+{% endif %}
+{% endblock %}

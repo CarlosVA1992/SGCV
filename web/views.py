@@ -185,3 +185,24 @@ def propuesta_agenda(request):
         "propuesta": propuesta,
         "fecha": fecha,
     })
+from core.services import registrar_emergencia
+
+
+@role_required("administrador", "veterinario")
+def registrar_emergencia_view(request, cita_id):
+    cita = get_object_or_404(Cita, pk=cita_id)
+    resultado = None
+    if request.method == "POST":
+        try:
+            minutos = int(request.POST.get("minutos_extra", 0))
+        except ValueError:
+            minutos = 0
+        if minutos <= 0:
+            messages.error(request, "Los minutos extra deben ser mayores que cero.")
+        else:
+            resultado = registrar_emergencia(cita.id, minutos, request.user)
+            messages.success(request, "Emergencia registrada.")
+    return render(request, "web/emergencia.html", {
+        "cita": cita,
+        "resultado": resultado,
+    })

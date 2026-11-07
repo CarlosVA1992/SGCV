@@ -15,4 +15,5 @@ urlpatterns = [
     path("consultas/<int:consulta_id>/adenda/", views.crear_adenda, name="crear_adenda"),
     path("mascotas/<int:mascota_id>/evolucion/", views.evolucion, name="evolucion"),
     path("agenda/propuesta/", views.propuesta_agenda, name="propuesta_agenda"),
+    path("citas/<int:cita_id>/emergencia/", views.registrar_emergencia_view, name="emergencia"),
 ]

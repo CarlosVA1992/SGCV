@@ -31,7 +31,7 @@
   <table style="width: 100%; border-collapse: collapse;" class="card">
     <thead>
       <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
-        <th>Hora</th><th>Mascota</th><th>Cliente</th><th>Veterinario</th><th>Estado</th>
+        <th>Hora</th><th>Mascota</th><th>Cliente</th><th>Veterinario</th><th>Estado</th><th></th>
       </tr>
     </thead>
     <tbody>
@@ -42,6 +42,7 @@
           <td>{{ c.cliente }}</td>
           <td>{{ c.veterinario }}</td>
           <td><span class="estado estado-{{ c.estado }}">{{ c.get_estado_display }}</span></td>
+          <td><a href="{% url 'emergencia' c.id %}" class="btn btn-secundario" style="padding: 2px 8px; font-size: 0.8em;">Emergencia</a></td>
         </tr>
       {% endfor %}
     </tbody>
