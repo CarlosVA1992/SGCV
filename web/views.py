@@ -167,3 +167,21 @@ def evolucion(request, mascota_id):
         "consultas": consultas,
         "resumen": resumen,
     })
+from datetime import date
+
+from core.services import optimizar_agenda
+
+
+@role_required("administrador", "veterinario")
+def propuesta_agenda(request):
+    fecha_str = request.GET.get("fecha")
+    try:
+        fecha = date.fromisoformat(fecha_str) if fecha_str else date.today()
+    except ValueError:
+        fecha = date.today()
+
+    propuesta = optimizar_agenda(fecha)
+    return render(request, "web/propuesta_agenda.html", {
+        "propuesta": propuesta,
+        "fecha": fecha,
+    })

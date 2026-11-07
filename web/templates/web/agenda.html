@@ -4,6 +4,7 @@
 
 {% block content %}
 <h1>Agenda</h1>
+<a href="{% url 'propuesta_agenda' %}?fecha={{ fecha|date:'Y-m-d' }}" class="btn btn-secundario" style="margin-bottom: 16px;">Ver propuesta automática</a>
 
 <form method="get" class="card" style="margin-bottom: 16px; display: flex; gap: 12px; align-items: end; flex-wrap: wrap;">
   <div>

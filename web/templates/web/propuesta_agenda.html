@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Propuesta de agenda — Huellitas{% endblock %}
+
+{% block content %}
+<h1>Propuesta automática de agenda</h1>
+
+<form method="get" class="card" style="margin-bottom: 16px; display: flex; gap: 12px; align-items: end;">
+  <div>
+    <label for="fecha">Fecha</label><br>
+    <input type="date" name="fecha" id="fecha" value="{{ fecha|date:'Y-m-d' }}">
+  </div>
+  <button type="submit" class="btn btn-primario">Generar propuesta</button>
+</form>
+
+<p class="card" style="padding: 8px 12px;">
+  <strong>Fecha:</strong> {{ fecha|date:"d/m/Y" }} ·
+  <strong>Citas evaluadas:</strong> {{ propuesta.total_citas }} ·
+  <strong>Asignadas:</strong> {{ propuesta.asignaciones|length }} ·
+  <strong>No asignadas:</strong> {{ propuesta.no_asignadas|length }}
+</p>
+
+{% if propuesta.asignaciones %}
+  <h2>Asignaciones propuestas</h2>
+  <table class="card" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
+        <th>Cita</th><th>Veterinario</th><th>Día</th><th>Hora inicio</th><th>Hora fin</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in propuesta.asignaciones %}
+        <tr style="border-bottom: 1px solid var(--borde);">
+          <td>{{ a.cita_id }}</td>
+          <td>{{ a.veterinario_id }}</td>
+          <td>{{ a.dia_semana }}</td>
+          <td>{{ a.hora_inicio|time:"H:i" }}</td>
+          <td>{{ a.hora_fin|time:"H:i" }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No hay asignaciones propuestas para esta fecha.</p>
+{% endif %}
+
+{% if propuesta.no_asignadas %}
+  <h2>Citas no asignadas</h2>
+  <p class="card" style="padding: 8px 12px; background: #FEF3C7;">
+    Las siguientes citas no encontraron franja compatible:
+    {{ propuesta.no_asignadas|join:", " }}
+  </p>
+{% endif %}
+
+<a href="{% url 'agenda' %}" class="btn btn-secundario" style="margin-top: 16px;">Volver a agenda</a>
+{% endblock %}
