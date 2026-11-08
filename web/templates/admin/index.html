@@ -1,0 +1,17 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="module" style="margin-bottom: 20px;">
+  <h2>Mantenimiento</h2>
+  <p style="padding: 8px 12px;">
+    <a href="{% url 'ejecutar_backup' %}" class="button" style="padding: 6px 12px; background: #2E7D6B; color: white; border-radius: 4px; text-decoration: none;">
+      Ejecutar backup ahora
+    </a>
+    <span style="margin-left: 12px; color: #666;">
+      Descarga la base de datos a <code>~/backups_huellitas/</code>.
+    </span>
+  </p>
+</div>
+{{ block.super }}
+{% endblock %}

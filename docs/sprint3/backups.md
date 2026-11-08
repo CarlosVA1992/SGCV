@@ -1,17 +1,23 @@
 # Backups y restauración — RNF-07
 
-## Configuración
-- Plataforma: PythonAnywhere (plan free)
-- Script: `scripts/backup_db.sh`
-- Tarea programada: diaria a las 23:00 (hora Bolivia = 03:00 UTC)
-- Directorio de backups: `~/backups_huellitas/`
-- Rotación: se conservan los últimos 7 backups
-- RPO: ≤24 h (backup diario)
+## Estado: parcialmente cumplido
 
-## Procedimiento de backup
-1. PythonAnywhere ejecuta `bash ~/SGCV/scripts/backup_db.sh` diariamente.
-2. El script usa `sqlite3 .backup` para copia consistente.
-3. El archivo se guarda como `huellitas_YYYYMMDD_HHMMSS.sqlite3`.
+RNF-07 pide un backup automático diario (RPO ≤24 h). El plan free de PythonAnywhere
+no incluye tareas programadas, por lo que el backup no puede automatizarse sin
+exponer un endpoint público o pagar un plan superior. Se implementó un backup
+**manual asistido** desde el admin, con procedimiento de restauración documentado
+y probado.
+
+## Implementación
+- Script: `scripts/backup_db.sh` (copia consistente con `sqlite3 .backup`).
+- Botón en el admin: `/admin/` → "Ejecutar backup ahora" (solo staff).
+- Directorio de backups: `~/backups_huellitas/`.
+- Rotación: últimos 7 backups.
+
+## Frecuencia recomendada
+- Ejecutar el backup **al final de cada jornada laboral** (idealmente 23:00).
+- Ejecutar antes de cada despliegue o cambio importante.
+- La persona responsable (administrador) debe hacerlo como parte del cierre diario.
 
 ## Procedimiento de restauración (verificable en <2 h)
 1. Identificar el backup más reciente:

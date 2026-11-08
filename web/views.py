@@ -206,3 +206,26 @@ def registrar_emergencia_view(request, cita_id):
         "cita": cita,
         "resultado": resultado,
     })
+
+import subprocess
+from pathlib import Path
+
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import JsonResponse
+
+
+@staff_member_required
+def ejecutar_backup(request):
+    """Ejecuta el script de backup manualmente. Solo staff/superusuarios."""
+    script = Path.home() / "SGCV" / "scripts" / "backup_db.sh"
+    if not script.exists():
+        return JsonResponse({"ok": False, "error": "Script no encontrado"}, status=500)
+
+    resultado = subprocess.run(
+        ["bash", str(script)], capture_output=True, text=True,
+    )
+    return JsonResponse({
+        "ok": resultado.returncode == 0,
+        "stdout": resultado.stdout,
+        "stderr": resultado.stderr,
+    })
