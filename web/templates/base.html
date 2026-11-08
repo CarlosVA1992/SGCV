@@ -117,6 +117,7 @@
     <nav>
       {% if user.is_authenticated %}
             <a href="{% url 'crear_cita' %}">Nueva cita</a>
+              <a href="{% url 'crear_cliente' %}" class="btn btn-secundario" style="border: none; color: #F2A65A; font-weight: bold;">+ Nuevo Cliente</a>
             {% if user.is_superuser or user.groups.all|length > 0 %}
             <a href="{% url 'historial_dummy' %}">Historial</a>
             <a href="{% url 'agenda' %}">Agenda</a>

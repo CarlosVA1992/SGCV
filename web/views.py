@@ -207,3 +207,34 @@ def registrar_emergencia_view(request, cita_id):
         "resultado": resultado,
     })
 
+from .forms import ClienteForm
+
+@role_required("administrador", "recepcionista")
+def crear_cliente(request):
+    if request.method == "POST":
+        form = ClienteForm(request.POST)
+        if form.is_valid():
+            cliente = form.save()
+            messages.success(request, "Cliente registrado. Ahora puede registrar su mascota.")
+            return redirect("crear_mascota", cliente_id=cliente.id) # Lo mandamos directo a crear la mascota
+    else:
+        form = ClienteForm()
+    return render(request, "web/crear_cliente.html", {"form": form})
+
+from .forms import MascotaForm
+from core.models import Cliente
+
+@role_required("administrador", "recepcionista")
+def crear_mascota(request, cliente_id):
+    cliente = get_object_or_404(Cliente, pk=cliente_id)
+    if request.method == "POST":
+        form = MascotaForm(request.POST)
+        if form.is_valid():
+            mascota = form.save(commit=False)
+            mascota.cliente = cliente
+            mascota.save()
+            messages.success(request, "Mascota registrada. Ya puede agendar una cita.")
+            return redirect("crear_cita") # Lo mandamos directo a agendar cita
+    else:
+        form = MascotaForm()
+    return render(request, "web/crear_mascota.html", {"form": form, "cliente": cliente})

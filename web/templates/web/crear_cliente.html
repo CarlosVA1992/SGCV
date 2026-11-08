@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Nuevo Cliente — Huellitas{% endblock %}
+
+{% block content %}
+<h1>Registrar nuevo cliente</h1>
+<div class="card" style="max-width: 500px; margin-top: 16px;">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primario">Guardar y continuar a Mascota</button>
+    <a href="{% url 'agenda' %}" class="btn btn-secundario">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

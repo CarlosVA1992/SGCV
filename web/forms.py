@@ -85,3 +85,25 @@ class AdendaForm(forms.ModelForm):
         if not motivo:
             raise forms.ValidationError("El motivo de la adenda es obligatorio.")
         return motivo
+
+from core.models import Cliente
+
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = ["nombre", "telefono", "email"]
+        widgets = {
+            "nombre": forms.TextInput(attrs={"placeholder": "Ej. María Gómez"}),
+            "telefono": forms.TextInput(attrs={"placeholder": "Ej. 70012345"}),
+            "email": forms.EmailInput(attrs={"placeholder": "opcional@correo.com"}),
+        }
+from core.models import Mascota
+
+class MascotaForm(forms.ModelForm):
+    class Meta:
+        model = Mascota
+        fields = ["nombre", "especie", "alergias", "medicamentos_activos"]
+        widgets = {
+            "nombre": forms.TextInput(attrs={"placeholder": "Ej. Rocky"}),
+            "especie": forms.TextInput(attrs={"placeholder": "Ej. Perro, Gato"}),
+        }
