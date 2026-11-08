@@ -44,3 +44,13 @@ Ver [`docs/setup.md`](docs/setup.md).
 ## Deuda técnica conocida
 - **RNF-07 (backups diarios):** pospuesto para versión futura por limitantes del
   hosting gratuito. Ver [`docs/sprint3/rnf07_pendiente.md`](docs/sprint3/rnf07_pendiente.md).
+## Sprint 3 — Evidencia
+- [Review y retrospectiva](docs/sprint3/review.md)
+- [Revisión de código](docs/sprint3/revision_codigo.md)
+- [Buffer de imprevistos](docs/sprint3/buffer.md)
+- [Despliegue y monitoreo](docs/sprint3/despliegue.md)
+- [Medición de uptime](docs/sprint3/uptime.md)
+- [RNF-07 pendiente](docs/sprint3/rnf07_pendiente.md)
+
+## Enlace al sistema desplegado
+https://cva1992.pythonanywhere.com

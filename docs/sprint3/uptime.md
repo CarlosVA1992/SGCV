@@ -2,7 +2,7 @@
 
 ## Configuración del monitoreo
 - Servicio: UptimeRobot (plan free)
-- URL monitoreada: https://huellitas-yw64.onrender.com/login/
+- URL monitoreada: https://cva1992.pythonanywhere.com
 - Intervalo de chequeo: 5 minutos
 - Tipo: HTTP(s)
 - Fecha de inicio de medición: [dd/mm/aaaa]

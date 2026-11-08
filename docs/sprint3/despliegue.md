@@ -1,8 +1,8 @@
 # Despliegue y monitoreo — RNF-02
 
 ## Hosting
-- Plataforma: Render (plan free)
-- URL: https://huellitas.onrender.com
+- Plataforma: Pythonanywhere
+- URL: https://cva1992.pythonanywhere.com
 - Runtime: Python 3.12
 - Servidor WSGI: gunicorn
 - Build: `pip install -r requirements.txt && python manage.py migrate && python manage.py crear_roles`
