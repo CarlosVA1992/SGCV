@@ -238,3 +238,11 @@ def crear_mascota(request, cliente_id):
     else:
         form = MascotaForm()
     return render(request, "web/crear_mascota.html", {"form": form, "cliente": cliente})
+
+from django.shortcuts import redirect
+
+def redireccion_login(request):
+    """Redirige al usuario según su rol después de iniciar sesión."""
+    if request.user.groups.filter(name="veterinario").exists() and not request.user.is_superuser:
+        return redirect("buscar_mascota")
+    return redirect("agenda")

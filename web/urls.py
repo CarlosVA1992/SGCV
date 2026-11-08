@@ -18,5 +18,6 @@ urlpatterns = [
     path("citas/<int:cita_id>/emergencia/", views.registrar_emergencia_view, name="emergencia"),
     path("clientes/nuevo/", views.crear_cliente, name="crear_cliente"),
     path("clientes/<int:cliente_id>/mascota/nueva/", views.crear_mascota, name="crear_mascota"),
+    path("post-login/", views.redireccion_login, name="redireccion_login"),
     
 ]
