@@ -54,3 +54,8 @@ Ver [`docs/setup.md`](docs/setup.md).
 
 ## Enlace al sistema desplegado
 https://cva1992.pythonanywhere.com
+
+## Backups
+- Tarea diaria a las 23:00 (hora Bolivia).
+- Script: `scripts/backup_db.sh`.
+- Documentación: [`docs/sprint3/backups.md`](docs/sprint3/backups.md).
