@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="200" height="60">
-  <g fill="#2E7D6B">
+  <g fill="#FFFFFF">
     <ellipse cx="30" cy="38" rx="10" ry="12"/>
     <circle cx="18" cy="20" r="5"/>
     <circle cx="30" cy="14" r="5"/>
     <circle cx="42" cy="20" r="5"/>
   </g>
-  <text x="60" y="40" font-family="Nunito, sans-serif" font-size="24" font-weight="700" fill="#2B2B2B">
+  <text x="60" y="40" font-family="Nunito, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF">
     Huellitas
   </text>
 </svg>
