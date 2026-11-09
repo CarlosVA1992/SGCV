@@ -24,20 +24,39 @@
       background: var(--fondo);
       color: var(--texto);
     }
-    header {
+       header {
       background: var(--primario);
       color: white;
-      padding: 12px 24px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      justify-content: space-between; /* Separa el logo de los botones */
+      flex-wrap: wrap; /* Permite que los elementos bajen de línea si no caben */
+      gap: 12px;
     }
-    header img { height: 36px; }
+    header img { height: 32px; }
+    
+    header nav {
+      display: flex;
+      flex-wrap: wrap; /* Hace que los enlaces bajen de línea en móvil */
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+    
+    /* En pantallas grandes, el nav vuelve a estar alineado a la derecha */
+    @media (min-width: 768px) {
+      header nav {
+        width: auto;
+      }
+    }
+
     header nav a {
       color: white;
       text-decoration: none;
-      margin-right: 16px;
       font-weight: 500;
+      font-size: 0.95em; /* Letra un poco más pequeña para que quepa mejor */
+      padding: 4px 0;
     }
     header nav a:hover { text-decoration: underline; }
     main {
@@ -130,14 +149,14 @@
           <a href="{% url 'buscar_mascota' %}">Historial Clínico</a>
         {% endif %}
 
-        {# --- BOTÓN SALIR Y NOMBRE DE USUARIO --- #}
-        <div style="margin-left: auto; display: flex; gap: 16px; align-items: center;">
-          <span style="font-size: 0.9em; color: #E2F1EE;">
-            Sesión: <strong>{{ user.username }}</strong>
+                {# --- BOTÓN SALIR Y NOMBRE DE USUARIO --- #}
+        <div style="display: flex; gap: 16px; align-items: center; margin-left: 0;">
+          <span style="font-size: 0.85em; color: #E2F1EE; white-space: nowrap;">
+            <strong>{{ user.username }}</strong>
           </span>
           <form method="post" action="{% url 'logout' %}" style="margin: 0;">
             {% csrf_token %}
-            <button type="submit" style="background: none; border: none; color: white; text-decoration: underline; cursor: pointer; font-family: inherit; padding: 0;">
+            <button type="submit" style="background: none; border: none; color: white; text-decoration: underline; cursor: pointer; font-family: inherit; padding: 0; font-size: 0.9em;">
               Salir
             </button>
           </form>
