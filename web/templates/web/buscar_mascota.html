@@ -34,6 +34,7 @@
                 <td>
                   <a href="{% url 'crear_consulta' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Nueva consulta</a>
                   <a href="{% url 'evolucion' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Evolución</a>
+                    <a href="{% url 'agregar_mascota' m.cliente.id %}" class="btn btn-secundario" style="padding: 4px 10px; background: #F2A65A;">+ Mascota</a>
                 </td>
               </tr>
             {% endfor %}

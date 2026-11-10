@@ -246,3 +246,7 @@ def redireccion_login(request):
     if request.user.groups.filter(name="veterinario").exists() and not request.user.is_superuser:
         return redirect("buscar_mascota")
     return redirect("agenda")
+@role_required("administrador", "recepcionista")
+def agregar_mascota(request, cliente_id):
+    # Reutilizamos la lógica que ya teníamos para crear mascota
+    return crear_mascota(request, cliente_id)
