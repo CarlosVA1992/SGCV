@@ -29,9 +29,9 @@
 {% if citas_dia %}
 <div style="overflow-x: auto;">
   <table style="width: 100%; border-collapse: collapse;" class="card">
-    <thead>
+        <thead>
       <tr style="text-align: left; border-bottom: 1px solid var(--borde);">
-        <th>Hora</th><th>Mascota</th><th>Cliente</th><th>Veterinario</th><th>Estado</th><th></th>
+        <th>Hora</th><th>Mascota</th><th>Cliente</th><th>Veterinario</th><th>Estado</th><th>Acción</th>
       </tr>
     </thead>
     <tbody>
@@ -42,7 +42,31 @@
           <td>{{ c.cliente }}</td>
           <td>{{ c.veterinario }}</td>
           <td><span class="estado estado-{{ c.estado }}">{{ c.get_estado_display }}</span></td>
-          <td><a href="{% url 'emergencia' c.id %}" class="btn btn-secundario" style="padding: 2px 8px; font-size: 0.8em;">Emergencia</a></td>
+          <td>
+            {# Si la cita está reprogramada, mostramos el botón de aplicar la propuesta #}
+            {% if c.estado == 'reprogramada' %}
+              {% if c.id in propuestas %}
+                <form method="post" action="{% url 'aplicar_reprogramacion' c.id %}" style="margin: 0;">
+                  {% csrf_token %}
+                  <input type="hidden" name="nueva_hora" value="{{ propuestas|default_if_none:''|dictsort:0|first }}">
+                  <!-- Usamos un pequeño truco en el template para obtener el valor del diccionario -->
+                  {% for k, v in propuestas.items %}
+                    {% if k == c.id %}
+                      <input type="hidden" name="nueva_hora" value="{{ v }}">
+                      <button type="submit" class="btn btn-secundario" style="padding: 2px 8px; font-size: 0.8em; background: #8B5CF6; color: white;">
+                        Mover a {{ v }}
+                      </button>
+                    {% endif %}
+                  {% endfor %}
+                </form>
+              {% else %}
+                <span style="font-size: 0.8em; color: #666;">Sin propuesta</span>
+              {% endif %}
+            {% endif %}
+            
+            {# Botón de emergencia (para el veterinario) #}
+            <a href="{% url 'emergencia' c.id %}" class="btn btn-secundario" style="padding: 2px 8px; font-size: 0.8em; margin-left: 4px;">Emergencia</a>
+          </td>
         </tr>
       {% endfor %}
     </tbody>

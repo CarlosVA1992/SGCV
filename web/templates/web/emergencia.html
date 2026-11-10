@@ -72,6 +72,13 @@
           <td>{{ a.cita_id }}</td>
           <td>{{ a.veterinario_id }}</td>
           <td>{{ a.hora_inicio|time:"H:i" }} – {{ a.hora_fin|time:"H:i" }}</td>
+          <td>
+  <form method="post" action="{% url 'aplicar_reprogramacion' a.cita_id %}">
+    {% csrf_token %}
+    <input type="hidden" name="nueva_hora" value="{{ a.hora_inicio|time:'H:i' }}">
+    <button type="submit" class="btn btn-primario" style="padding: 4px 8px;">Aplicar hora</button>
+  </form>
+</td>
         </tr>
       {% endfor %}
     </tbody>

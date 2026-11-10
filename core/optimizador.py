@@ -17,6 +17,7 @@ class CitaPendiente:
     prioridad: int  # 1=baja ... 4=urgente
     cliente_id: int
     mascota_id: int
+    veterinario_id: int
     motivo: str
 
 
@@ -49,6 +50,7 @@ def cargar_citas_pendientes(fecha: date) -> list[CitaPendiente]:
             prioridad=c.prioridad,
             cliente_id=c.cliente_id,
             mascota_id=c.mascota_id,
+            veterinario_id=c.veterinario_id,
             motivo=c.motivo,
         )
         for c in qs
@@ -71,13 +73,20 @@ def cargar_franjas_disponibles() -> list[FranjaDisponible]:
 
 
 def optimizar(citas: list[CitaPendiente], franjas: list[FranjaDisponible],
-              pesos: dict | None = None) -> list[Asignacion]:
+              pesos: dict | None = None, citas_ocupadas: list[dict] | None = None) -> list[Asignacion]:
     """
     Asigna citas a franjas minimizando huecos y espera ponderada por prioridad.
     Si una cita no cabe, se marca como no asignada con costo alto.
+    
+    citas_ocupadas: Lista de diccionarios con las citas que ya están agendadas
+    (ej. [{"veterinario_id": 1, "dia_semana": 0, "hora_inicio": time(10,0)}])
+    para que el optimizador no las sobrescriba.
     """
     if pesos is None:
         pesos = {"huecos": 1.0, "espera": 2.0}
+        
+    if citas_ocupadas is None:
+        citas_ocupadas = []
 
     if not citas or not franjas:
         return []
@@ -88,6 +97,9 @@ def optimizar(citas: list[CitaPendiente], franjas: list[FranjaDisponible],
         for f in franjas:
             if _minutos_entre(f.hora_inicio, f.hora_fin) >= c.duracion_min:
                 pares.append((c, f))
+
+    if not pares:
+        return []
 
     prob = pulp.LpProblem("asignacion_citas", pulp.LpMinimize)
 
@@ -119,15 +131,30 @@ def optimizar(citas: list[CitaPendiente], franjas: list[FranjaDisponible],
             == 1
         )
 
-    # Cada franja: a lo sumo una cita
+    # Cada franja: a lo sumo una cita, y bloqueamos las que ya están ocupadas
     for f in franjas:
-        prob += pulp.lpSum(
-            x[(c.id, f.veterinario_id, f.dia_semana, f.hora_inicio)]
-            for c, ff in pares
-            if ff.veterinario_id == f.veterinario_id
-            and ff.dia_semana == f.dia_semana
-            and ff.hora_inicio == f.hora_inicio
-        ) <= 1
+        # Verificamos si esta franja ya está ocupada en la realidad
+        esta_ocupada = any(
+            oc["veterinario_id"] == f.veterinario_id and
+            oc["dia_semana"] == f.dia_semana and
+            oc["hora_inicio"] == f.hora_inicio
+            for oc in citas_ocupadas
+        )
+        
+        if esta_ocupada:
+            # Si ya está ocupada, forzamos la variable a 0 para que no la asigne
+            for c, ff in pares:
+                if ff == f:
+                    prob += x[(c.id, f.veterinario_id, f.dia_semana, f.hora_inicio)] == 0
+        else:
+            # Si está libre, aplicamos la restricción normal
+            prob += pulp.lpSum(
+                x[(c.id, f.veterinario_id, f.dia_semana, f.hora_inicio)]
+                for c, ff in pares
+                if ff.veterinario_id == f.veterinario_id
+                and ff.dia_semana == f.dia_semana
+                and ff.hora_inicio == f.hora_inicio
+            ) <= 1
 
     # Función objetivo
     COSTO_NO_ASIGNAR = 10000

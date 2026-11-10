@@ -9,13 +9,14 @@ from .forms import CitaForm
 
 from django.http import HttpResponse
 
-from datetime import date, timedelta
+from datetime import date, time, timedelta
 from core.models import Cita, Veterinario
 
 from django.db.models import Q
 from core.models import Mascota, Consulta, Adenda
 from django.shortcuts import get_object_or_404
 from .forms import ConsultaForm, AdendaForm
+from core.optimizador import CitaPendiente, cargar_citas_pendientes, cargar_franjas_disponibles, optimizar
 
 
 
@@ -92,15 +93,54 @@ def agenda(request):
     # Vista de día
     citas_dia = [c for c in qs.filter(fecha=fecha).order_by("hora")]
 
+    
+    propuestas = {}
+    citas_reprogramadas = [c for c in citas_dia if c.estado == "reprogramada"]
+    
+    if citas_reprogramadas:
+        # 1. Cargar todas las franjas, pero filtrar SOLO las del día de hoy
+        dia_semana = fecha.weekday() # 0=Lunes, 6=Domingo
+        todas_franjas = cargar_franjas_disponibles()
+        franjas_hoy = [f for f in todas_franjas if f.dia_semana == dia_semana]
+        
+        # 2. Cargar las citas que YA están ocupando un espacio hoy (para bloquearlas)
+        citas_ocupadas = [
+            {
+                "veterinario_id": c.veterinario_id,
+                "dia_semana": dia_semana,
+                "hora_inicio": c.hora
+            }
+            for c in citas_dia if c.estado in ["programada", "en_atencion"]
+        ]
+
+        for c in citas_reprogramadas:
+            citas_pendientes_dummy = [
+                CitaPendiente(
+                    id=c.id, duracion_min=c.duracion_min, prioridad=c.prioridad, 
+                    cliente_id=c.cliente_id, mascota_id=c.mascota_id,veterinario_id=c.veterinario_id, motivo=c.motivo
+                )
+            ]
+            
+            # 3. Pasamos las citas_ocupadas al optimizador
+            asignaciones = optimizar(
+                citas_pendientes_dummy, 
+                franjas_hoy, 
+                citas_ocupadas=citas_ocupadas
+            )
+            
+            if asignaciones:
+                propuestas[c.id] = asignaciones[0].hora_inicio.strftime("%H:%M")
     context = {
-        "fecha": fecha,
-        "dias_semana": dias_semana,
-        "agenda_semana": agenda_semana,
-        "citas_dia": citas_dia,
-        "veterinarios": veterinarios,
-        "filtro_vet": filtro_vet,
-    }
+            "fecha": fecha,
+            "dias_semana": dias_semana,
+            "agenda_semana": agenda_semana,
+            "citas_dia": citas_dia,
+            "veterinarios": veterinarios,
+            "filtro_vet": filtro_vet,
+            "propuestas": propuestas,
+        }
     return render(request, "web/agenda.html", context)
+    
 
 @login_required
 
@@ -150,10 +190,10 @@ def crear_adenda(request, consulta_id):
             adenda.consulta = consulta
             adenda.usuario = request.user
             adenda.save()
-            messages.success(request, "Adenda registrada correctamente.")
-            return redirect("buscar_mascota")
+            messages.success(request, "Adenda registrada correctamente. El registro original no ha sido modificado.")
+            # Redirigimos a la evolución de la mascota de esa consulta
+            return redirect("evolucion", mascota_id=consulta.mascota.id)
     else:
-        # Precarga el diagnóstico actual como valor anterior
         form = AdendaForm(initial={"valor_anterior": consulta.diagnostico})
     return render(request, "web/crear_adenda.html", {
         "form": form,
@@ -264,3 +304,19 @@ def redireccion_login(request):
 def agregar_mascota(request, cliente_id):
     # Reutilizamos la lógica que ya teníamos para crear mascota
     return crear_mascota(request, cliente_id)
+
+@role_required("administrador", "recepcionista")
+def aplicar_reprogramacion(request, cita_id):
+    cita = get_object_or_404(Cita, pk=cita_id)
+    if request.method == "POST":
+        nueva_hora_str = request.POST.get("nueva_hora")
+        if nueva_hora_str:
+            try:
+                cita.hora = time.fromisoformat(nueva_hora_str)
+                cita.estado = "programada" # Vuelve a estar activa
+                cita.save()
+                messages.success(request, f"Cita reprogramada exitosamente a las {nueva_hora_str}.")
+            except IntegrityError:
+                messages.error(request, f"No se pudo reprogramar: Ya existe otra cita para este veterinario a las {nueva_hora_str}.")
+    
+    return redirect("agenda")

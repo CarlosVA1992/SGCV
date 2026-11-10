@@ -49,19 +49,27 @@
   <div style="display: flex; flex-direction: column; gap: 12px;">
     {% for c in consultas %}
       <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
           <strong>{{ c.fecha|date:"d/m/Y" }}</strong>
-          <span style="color: var(--texto-sec); font-size: 0.9em;">
-            {{ c.veterinario.nombre }} · Peso: {{ c.peso_kg }} kg
-          </span>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span style="color: var(--texto-sec); font-size: 0.9em;">
+              {{ c.veterinario.nombre }} · Peso: {{ c.peso_kg }} kg
+            </span>
+            <a href="{% url 'crear_adenda' c.id %}" class="btn btn-secundario" style="padding: 2px 8px; font-size: 0.8em;">
+              + Adenda
+            </a>
+          </div>
         </div>
         <p style="margin: 8px 0 4px;"><strong>Diagnóstico:</strong> {{ c.diagnostico }}</p>
         <p style="margin: 0;"><strong>Tratamiento:</strong> {{ c.tratamiento }}</p>
-        {% if c.adendas.all %}
-          <div style="margin-top: 8px; padding: 8px; background: #FEF3C7; border-radius: 4px; font-size: 0.9em;">
-            <strong>Adendas:</strong>
+                {% if c.adendas.all %}
+          <div style="margin-top: 12px; padding: 12px; background: #FFFBEB; border-left: 4px solid #F59E0B; border-radius: 4px; font-size: 0.9em;">
+            <strong style="color: #B45309;">Correcciones (Adendas):</strong>
             {% for a in c.adendas.all %}
-              <div>{{ a.fecha|date:"d/m/Y" }} — {{ a.motivo }}: de "{{ a.valor_anterior }}" a "{{ a.valor_nuevo }}"</div>
+              <div style="margin-top: 4px; color: #78350F;">
+                <strong>{{ a.fecha|date:"d/m/Y" }}</strong> ({{ a.usuario.username }}) — Motivo: <em>{{ a.motivo }}</em><br>
+                Cambió de: "<del>{{ a.valor_anterior }}</del>" a: "<strong>{{ a.valor_nuevo }}</strong>"
+              </div>
             {% endfor %}
           </div>
         {% endif %}

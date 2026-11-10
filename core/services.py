@@ -28,25 +28,55 @@ from core.optimizador import (
 )
 
 
+from datetime import date
+from core.models import Cita
+from core.optimizador import cargar_franjas_disponibles, optimizar, CitaPendiente
+
 def optimizar_agenda(fecha: date) -> dict:
     """
-    Propone una asignación automática de las citas del día a franjas disponibles.
-
-    Devuelve un dict con:
-      - asignaciones: lista de Asignacion
-      - no_asignadas: lista de ids de citas que no cupieron
-      - total_citas: número de citas evaluadas
+    Propone una asignación automática para las citas del día que NO están agendadas,
+    respetando los horarios que ya están ocupados.
     """
-    citas = cargar_citas_pendientes(fecha)
-    franjas = cargar_franjas_disponibles()
-    asignaciones = optimizar(citas, franjas)
+    # 1. Obtener las citas reales de la BD para saber cuáles están ocupadas
+    citas_reales = Cita.objects.filter(fecha=fecha).select_related("veterinario")
+    
+    # 2. Separar las citas que ya tienen hora (programadas) de las que necesitan hora (reprogramadas)
+    citas_ya_agendadas = [c for c in citas_reales if c.estado in ["programada", "en_atencion"]]
+    citas_por_agendar = [c for c in citas_reales if c.estado == "reprogramada"]
+    
+    # 3. Convertir las citas por agendar a la estructura que entiende el optimizador
+    citas_pendientes = [
+        CitaPendiente(
+            id=c.id, duracion_min=c.duracion_min, prioridad=c.prioridad,
+            cliente_id=c.cliente_id, mascota_id=c.mascota_id, 
+            veterinario_id=c.veterinario_id, motivo=c.motivo
+        ) for c in citas_por_agendar
+    ]
+    
+    # 4. Filtrar franjas solo para el día de la semana actual
+    dia_semana = fecha.weekday()
+    todas_franjas = cargar_franjas_disponibles()
+    franjas_hoy = [f for f in todas_franjas if f.dia_semana == dia_semana]
+    
+    # 5. Crear la lista de bloqueos (las que ya están en la agenda)
+    citas_ocupadas = [
+        {
+            "veterinario_id": c.veterinario_id,
+            "dia_semana": dia_semana,
+            "hora_inicio": c.hora
+        }
+        for c in citas_ya_agendadas
+    ]
+
+    # 6. Ejecutar el optimizador SOLO con las citas pendientes
+    asignaciones = optimizar(citas_pendientes, franjas_hoy, citas_ocupadas=citas_ocupadas)
 
     asignadas_ids = {a.cita_id for a in asignaciones}
-    no_asignadas = [c.id for c in citas if c.id not in asignadas_ids]
+    no_asignadas = [c.id for c in citas_por_agendar if c.id not in asignadas_ids]
 
     return {
         "fecha": fecha,
-        "total_citas": len(citas),
+        "total_citas": len(citas_por_agendar),
         "asignaciones": asignaciones,
         "no_asignadas": no_asignadas,
     }
