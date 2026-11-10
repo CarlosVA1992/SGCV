@@ -93,54 +93,73 @@ def agenda(request):
     # Vista de día
     citas_dia = [c for c in qs.filter(fecha=fecha).order_by("hora")]
 
-    
+    # --- INICIO DE LA CORRECCIÓN ---
     propuestas = {}
     citas_reprogramadas = [c for c in citas_dia if c.estado == "reprogramada"]
     
     if citas_reprogramadas:
-        # 1. Cargar todas las franjas, pero filtrar SOLO las del día de hoy
-        dia_semana = fecha.weekday() # 0=Lunes, 6=Domingo
+        dia_semana = fecha.weekday() 
         todas_franjas = cargar_franjas_disponibles()
+        # 1. Filtrar SOLO las franjas del día actual
         franjas_hoy = [f for f in todas_franjas if f.dia_semana == dia_semana]
         
-        # 2. Cargar las citas que YA están ocupando un espacio hoy (para bloquearlas)
+        # 2. Bloquear TODAS las citas del día (programadas, en atención y reprogramadas)
         citas_ocupadas = [
             {
                 "veterinario_id": c.veterinario_id,
                 "dia_semana": dia_semana,
                 "hora_inicio": c.hora
             }
-            for c in citas_dia if c.estado in ["programada", "en_atencion"]
+            for c in citas_dia if c.estado in ["programada", "en_atencion", "reprogramada"]
         ]
 
         for c in citas_reprogramadas:
             citas_pendientes_dummy = [
                 CitaPendiente(
-                    id=c.id, duracion_min=c.duracion_min, prioridad=c.prioridad, 
-                    cliente_id=c.cliente_id, mascota_id=c.mascota_id,veterinario_id=c.veterinario_id, motivo=c.motivo
+                    id=c.id, 
+                    duracion_min=c.duracion_min, 
+                    prioridad=c.prioridad, 
+                    cliente_id=c.cliente_id, 
+                    mascota_id=c.mascota_id, 
+                    veterinario_id=c.veterinario_id, 
+                    motivo=c.motivo
                 )
             ]
             
-            # 3. Pasamos las citas_ocupadas al optimizador
+            # Ejecutamos el optimizador pasándole solo las franjas de hoy
             asignaciones = optimizar(
                 citas_pendientes_dummy, 
                 franjas_hoy, 
                 citas_ocupadas=citas_ocupadas
             )
             
+            # 3. Validación de seguridad extra
             if asignaciones:
-                propuestas[c.id] = asignaciones[0].hora_inicio.strftime("%H:%M")
+                hora_sugerida = asignaciones[0].hora_inicio
+                hora_ocupada = any(
+                    oc["hora_inicio"] == hora_sugerida for oc in citas_ocupadas
+                )
+                
+                if not hora_ocupada:
+                    propuestas[c.id] = hora_sugerida.strftime("%H:%M")
+                else:
+                    # Si se equivoca, buscamos el siguiente hueco manualmente
+                    for f in franjas_hoy:
+                        if f.hora_inicio not in [oc["hora_inicio"] for oc in citas_ocupadas]:
+                            propuestas[c.id] = f.hora_inicio.strftime("%H:%M")
+                            break
+    # --- FIN DE LA CORRECCIÓN ---
+
     context = {
-            "fecha": fecha,
-            "dias_semana": dias_semana,
-            "agenda_semana": agenda_semana,
-            "citas_dia": citas_dia,
-            "veterinarios": veterinarios,
-            "filtro_vet": filtro_vet,
-            "propuestas": propuestas,
-        }
+        "fecha": fecha,
+        "dias_semana": dias_semana,
+        "agenda_semana": agenda_semana,
+        "citas_dia": citas_dia,
+        "veterinarios": veterinarios,
+        "filtro_vet": filtro_vet,
+        "propuestas": propuestas,
+    }
     return render(request, "web/agenda.html", context)
-    
 
 @login_required
 
