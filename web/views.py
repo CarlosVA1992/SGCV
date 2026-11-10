@@ -103,13 +103,20 @@ def agenda(request):
     return render(request, "web/agenda.html", context)
 
 @login_required
+
 def buscar_mascota(request):
     q = request.GET.get("q", "").strip()
     resultados = []
     if q:
         resultados = Mascota.objects.filter(
-            Q(codigo__icontains=q) | Q(nombre__icontains=q)
+            # Buscamos en código de mascota, nombre de mascota, 
+            # nombre del cliente o teléfono del cliente
+            Q(codigo__icontains=q) | 
+            Q(nombre__icontains=q) | 
+            Q(cliente__nombre__icontains=q) |
+            Q(cliente__telefono__icontains=q)
         ).select_related("cliente").order_by("codigo")
+        
     return render(request, "web/buscar_mascota.html", {
         "q": q,
         "resultados": resultados,
