@@ -31,10 +31,15 @@
                 <td>{{ m.cliente.nombre }}</td>
                 <td>{{ m.alergias|default:"—" }}</td>
                 <td>{{ m.medicamentos_activos|default:"—" }}</td>
-                <td>
-                  <a href="{% url 'crear_consulta' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Nueva consulta</a>
-                  <a href="{% url 'evolucion' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Evolución</a>
-                    <a href="{% url 'agregar_mascota' m.cliente.id %}" class="btn btn-secundario" style="padding: 4px 10px; background: #F2A65A;">+ Mascota</a>
+                <td style="display: flex; gap: 4px;">
+                  {# BOTÓN PARA AGREGAR MASCOTA (Visible para todos los que entren aquí) #}
+                  <a href="{% url 'agregar_mascota' m.cliente.id %}" class="btn btn-secundario" style="padding: 4px 10px; background: #F2A65A;">+ Mascota</a>
+
+                  {# BOTONES CLÍNICOS (Solo veterinario y admin) #}
+                  {% if user.groups.all.0.name == 'veterinario' or user.is_superuser %}
+                    <a href="{% url 'crear_consulta' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Nueva consulta</a>
+                    <a href="{% url 'evolucion' m.id %}" class="btn btn-secundario" style="padding: 4px 10px;">Evolución</a>
+                  {% endif %}
                 </td>
               </tr>
             {% endfor %}

@@ -1,7 +1,8 @@
 from datetime import date, datetime
 
 from django import forms
-from core.models import Cita, Consulta, Adenda
+from core.models import Cita, Consulta, Adenda, Mascota
+
 
 
 
@@ -50,6 +51,24 @@ class CitaForm(forms.ModelForm):
                 "La mascota no pertenece al cliente seleccionado.",
             )
         return cleaned
+    
+
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Creamos un diccionario con las mascotas y sus dueños
+        # Esto lo inyectaremos en el HTML mediante un atributo data
+        mascotas_dict = {str(m.id): m.cliente_id for m in Mascota.objects.all()}
+        
+        # Agregamos un atributo 'data-cliente' a cada opción del select de mascotas
+        choices = [('', '---------')] + [
+            (m.id, str(m)) for m in Mascota.objects.all()
+        ]
+        self.fields['mascota'].choices = choices
+        
+        # Guardamos el diccionario para usarlo en el template
+        self.mascotas_dict = mascotas_dict
 
 
 class ConsultaForm(forms.ModelForm):

@@ -39,7 +39,14 @@ def crear_cita(request):
                 return redirect("crear_cita")
     else:
         form = CitaForm()
-    return render(request, "web/crear_cita.html", {"form": form})
+        # ... código anterior ...
+
+    return render(request, "web/crear_cita.html", {
+        "form": form,
+        "mascotas_dict": getattr(form, 'mascotas_dict', {}) # Pasamos el diccionario
+    })
+
+
 @role_required("administrador", "veterinario")
 def historial_dummy(request):
     """Vista temporal para probar el bloqueo por rol (se reemplaza en S2)."""

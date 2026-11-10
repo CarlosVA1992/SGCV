@@ -21,3 +21,47 @@
   </form>
 </div>
 {% endblock %}
+{% block extra_js %}
+{{ mascotas_dict|json_script:"mascotas-data" }}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const clienteSelect = document.getElementById("id_cliente");
+    const mascotaSelect = document.getElementById("id_mascota");
+    
+    // Leemos el JSON seguro generado por Django
+    const dataElement = document.getElementById("mascotas-data");
+    const mascotasDict = JSON.parse(dataElement.textContent);
+    
+    // Guardamos todas las opciones originales
+    const opcionesOriginales = Array.from(mascotaSelect.options);
+
+    function filtrarMascotas() {
+      const clienteId = clienteSelect.value;
+      
+      // Limpiamos el select actual
+      mascotaSelect.innerHTML = "";
+      
+      if (!clienteId) {
+        mascotaSelect.appendChild(opcionesOriginales[0]); // El "---------"
+        return;
+      }
+
+      // Filtramos las opciones
+      opcionesOriginales.forEach(opcion => {
+        if (opcion.value === "") {
+          mascotaSelect.appendChild(opcion); // Mantenemos el campo vacío
+        } else if (String(mascotasDict[opcion.value]) === String(clienteId)) {
+          mascotaSelect.appendChild(opcion); // Es de este cliente
+        }
+      });
+    }
+
+    // Escuchar el cambio de cliente
+    clienteSelect.addEventListener("change", filtrarMascotas);
+    
+    // Ejecutar al cargar la página (por si hay errores de validación)
+    filtrarMascotas();
+  });
+</script>
+{% endblock %}

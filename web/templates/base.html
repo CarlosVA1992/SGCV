@@ -136,11 +136,12 @@
     <nav style="display: flex; gap: 16px; align-items: center;">
       {% if user.is_authenticated %}
         
-        {# --- MENÚ PARA RECEPCIÓN Y ADMIN --- #}
+                {# --- MENÚ PARA RECEPCIÓN Y ADMIN --- #}
         {% if user.groups.all.0.name == 'recepcionista' or user.is_superuser %}
           <a href="{% url 'crear_cliente' %}">+ Nuevo Cliente</a>
           <a href="{% url 'crear_cita' %}">Nueva cita</a>
           <a href="{% url 'agenda' %}">Agenda</a>
+          <a href="{% url 'buscar_mascota' %}">Directorio</a> <!-- Nuevo botón -->
         {% endif %}
 
         {# --- MENÚ PARA VETERINARIO Y ADMIN --- #}
